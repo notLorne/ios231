@@ -26,6 +26,7 @@ class GameVC: UIViewController {
 
         txtFieldUneLettre.text = ""
         txtFieldLesLettres.text = ""
+        txtFieldLesLettres.isUserInteractionEnabled = false
         lblPointage.text = ""
         btnRejouer.isHidden = false
         lblMessage.text = ""
@@ -54,12 +55,10 @@ class GameVC: UIViewController {
         if hangmanGame.getIncorrectGuessCount() < hangmanGame.getNumberOfGuess() {
             if let letter = txtFieldUneLettre.text?.first {
 
-                // Make a guess using the HangmanGame instance
                 hangmanGame.makeGuess(letter: letter)
 
                 imgViewPendu.image = UIImage(named: hangmanGame.getCurrentImageName())!
                 
-                // Update UI elements
                 txtFieldLesLettres.text = hangmanGame.getSelectedLetters().sorted().map { String($0) }.joined(separator: ", ")
                 lblPointage.text = "Pointage: \(hangmanGame.getIncorrectGuessCount())/\(hangmanGame.getNumberOfGuess() )"
                 lblDevinette.text = hangmanGame.getGuessedWord()

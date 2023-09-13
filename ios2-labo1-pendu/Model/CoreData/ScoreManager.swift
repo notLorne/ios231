@@ -9,16 +9,15 @@ import Foundation
 import CoreData
 
 class ScoreManager {
-    // Core Data context provided by the CoreDataStack
+
     private let context: NSManagedObjectContext
 
     init(context: NSManagedObjectContext) {
         self.context = context
     }
 
-    // Function to save a high score.
     func saveHighScore(playerName: String, gameMode: Int16, score: Int16) {
-        let newHighScore = BestScores(context: context) // Assuming your entity name is "BestScores"
+        let newHighScore = BestScores(context: context)
         newHighScore.name = playerName
         newHighScore.mode = gameMode
         newHighScore.score = score
@@ -31,7 +30,6 @@ class ScoreManager {
         }
     }
 
-    // Function to retrieve high scores for a specific game mode.
     func getHighScores(for gameMode: Int16) -> [BestScores] {
         let fetchRequest: NSFetchRequest<BestScores> = BestScores.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "mode == %d", gameMode)
@@ -45,6 +43,4 @@ class ScoreManager {
             return []
         }
     }
-
-    // Add more methods as needed for managing high scores.
 }

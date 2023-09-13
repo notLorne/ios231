@@ -60,13 +60,12 @@ class SettingsVC: UIViewController {
     }
     
     @IBAction func loadButtonPressed(_ sender: UIButton) {
-        // Check if the username is empty
         guard let name = nameInput.text, !name.isEmpty else {
             showAlert(message: "Entrer un nom.")
             return
         }
 
-        if let preferences = UserDefaults.standard.dictionary(forKey: name) as? [String: Any] {
+        if let preferences = UserDefaults.standard.dictionary(forKey: name) {
             if let isEnglish = preferences["IsEnglish"] as? Bool,
                let isDarkMode = preferences["IsDarkMode"] as? Bool {
                 langueTog.isOn = isEnglish
@@ -89,7 +88,7 @@ class SettingsVC: UIViewController {
     func loadPreferences() {
 
         if let name = nameInput.text, !name.isEmpty {
-            if let preferences = UserDefaults.standard.dictionary(forKey: name) as? [String: Any] {
+            if let preferences = UserDefaults.standard.dictionary(forKey: name) {
                 if let isEnglish = preferences["IsEnglish"] as? Bool,
                    let isDarkMode = preferences["IsDarkMode"] as? Bool {
                     langueTog.isOn = isEnglish

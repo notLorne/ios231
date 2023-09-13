@@ -26,15 +26,16 @@ class HangmanGame {
             WordDownloader.shared.fetchRandomWord { result in
                 switch result {
                 case .success(let item):
-                    self.word = item.uppercased()
-                    self.guessedWord = Array(repeating: "_", count: item.count)
-                    completion(true) // Indicate success
-                    
+                    let title = item.uppercased()
+                    self.word = title
+                    self.guessedWord = Array(repeating: "_", count: title.count)
+                    completion(true)
+
                 case .failure(let error):
                     print("Error fetching word: \(error)")
                     self.word = "DEFAULT"
                     self.guessedWord = Array(repeating: "_", count: 7)
-                    completion(false) // Indicate failure
+                    completion(false)
                 }
             }
         } else {
@@ -42,44 +43,64 @@ class HangmanGame {
             MovieDownloader.shared.fetchRandomMovie { result in
                 switch result {
                 case .success(let item):
-                    self.word = item.Title.uppercased()
-                    self.guessedWord = Array(repeating: "_", count: item.Title.count)
-                    completion(true) // Indicate success
+                    let title = item.Title.uppercased()
+                    var initialGuessedWord = [Character]()
+
+                    for char in title {
+                        if char.isLetter {
+                            initialGuessedWord.append("_")
+                        } else {
+                            initialGuessedWord.append(char)
+                        }
+                    }
+
+                    self.word = title
+                    self.guessedWord = initialGuessedWord
+                    completion(true)
 
                 case .failure(let error):
                     print("Error fetching movie title: \(error)")
                     self.word = "DEFAULT"
                     self.guessedWord = Array(repeating: "_", count: 7)
-                    completion(false) // Indicate failure
+                    completion(false)
                 }
             }
         }
         selectedLetters = []
         incorrectGuessCount = 0
     }
+
     
     func isWordDownloaderMode() -> Bool? {
         return usingWordDownloader
     }
     
     func makeGuess(letter: Character) {
-        let uppercasedLetter = Character(letter.uppercased())
-        guard !selectedLetters.contains(uppercasedLetter) else {
-            return // Letter has already been guessed
-        }
+        let input = String(letter)
         
-        selectedLetters.insert(uppercasedLetter)
+        let pattern = "^[a-zA-Z]$"
         
-        if word.contains(uppercasedLetter) {
-            for (index, char) in word.enumerated() {
-                if char == uppercasedLetter {
-                    guessedWord[index] = char
-                }
+        if let _ = input.range(of: pattern, options: .regularExpression) {
+            let uppercasedLetter = Character(input.uppercased())
+            
+            guard !selectedLetters.contains(uppercasedLetter) else {
+                return
             }
-        } else {
-            incorrectGuessCount += 1
+            
+            selectedLetters.insert(uppercasedLetter)
+            
+            if word.contains(uppercasedLetter) {
+                for (index, char) in word.enumerated() {
+                    if char == uppercasedLetter {
+                        guessedWord[index] = char
+                    }
+                }
+            } else {
+                incorrectGuessCount += 1
+            }
         }
     }
+
     
     func getAHint() -> String {
         if usingWordDownloader != nil && usingWordDownloader == false {
